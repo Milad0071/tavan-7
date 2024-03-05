@@ -26,7 +26,7 @@
             </p>
           </div>
         </div>
-        <h2>{{ quizTitle }}:</h2>
+        <!-- <h2>{{ quizTitle }}:</h2> -->
         <div
           v-for="(question, index) in paginated"
           :key="index"
@@ -78,7 +78,6 @@
 </template>
 <script>
 import axios from "./../axios.js";
-// import questions from "./../assets/temp_files/questions.json";
 
 export default {
   props: { quizArray: Array },
@@ -86,6 +85,8 @@ export default {
     return {
       showNext: false,
       scrollVal: true,
+      answersCount: 0,
+      answersLength: 0,
       current: 1,
       pageSize: 10,
       totalPages: null,
@@ -143,7 +144,19 @@ export default {
       if (newVal) {
         this.scroll();
       }
-      console.log(this.current);
+    },
+    chosenAnswer: {
+      handler(newVal) {
+        this.showNext = true;
+        if (newVal.length != this.answersLength) {
+          this.answersLength = newVal.length;
+          this.answersCount += 1;
+          if (this.answersCount == 290) {
+            this.showNext = true;
+          }
+        }
+      },
+      deep: true,
     },
   },
   computed: {
@@ -179,16 +192,21 @@ export default {
           count += 1;
         }
       }
-      if (this.current == this.totalPages && count == this.questionsArray.length) {
+      if (
+        this.current == this.totalPages &&
+        count == this.questionsArray.length
+      ) {
         this.showNext = true;
-      } else if (this.current == this.totalPages && count != this.questionsArray.length) {
+      } else if (
+        this.current == this.totalPages &&
+        count != this.questionsArray.length
+      ) {
         this.$swal(
           "توجه!",
           "جهت پایان دادن آزمون باید به همه سوالات پاسخ داده باشید",
           "warning"
         );
-      }
-      else {
+      } else {
         window.scrollTo({
           top: 0,
           left: 0,
@@ -232,7 +250,9 @@ export default {
           "Content-Type": "application/json",
           Authorization: `Bearer ${this.$cookies.get("userToken")}`,
         },
-        url: `exam/qs-post/${this.$cookies.get("examId")}/?session=${this.$cookies.get("sessionId")}`,
+        url: `exam/qs-post/${this.$cookies.get(
+          "examId"
+        )}/?session=${this.$cookies.get("sessionId")}`,
         data: JSON.stringify(data),
       })
         .then((response) => {
@@ -293,7 +313,7 @@ export default {
   border-radius: 7px;
 }
 .warnings {
-  background-color: #A1834E;
+  background-color: #a1834e;
   margin-top: 1%;
   border-radius: 7px;
   padding: 10px;
@@ -339,7 +359,7 @@ export default {
 .desktopInstagramContainer {
   display: none;
 }
-@media screen and (max-width:1209px) {
+@media screen and (max-width: 1209px) {
   .mainContainer {
     display: none;
   }

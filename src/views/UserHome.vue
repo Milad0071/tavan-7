@@ -41,7 +41,9 @@
               ورود به آزمون استرانگ
             </v-btn>
           </div>
-          <h3 v-if="notShow" class="mt-3" style="color: #a1834e">شما یک بار در این آزمون شرکت کرده‌اید</h3>
+          <h3 v-if="notShow" class="mt-3" style="color: #a1834e">
+            شما یک بار در این آزمون شرکت کرده‌اید
+          </h3>
         </div>
       </div>
     </v-locale-provider>
@@ -77,13 +79,18 @@ export default {
           console.log(response);
           this.examId = response.data[0].id;
           this.$cookies.set("examId", this.examId);
-          this.$cookies.set("currentUserName", response.data[0].first_name.first_name);
-          this.$emit('reset-app');
-          this.checkAccess(response.data[0].user_registered_exams[0].exam);
+          this.$cookies.set(
+            "currentUserName",
+            response.data[0].first_name.first_name
+          );
+          this.$emit("reset-app");
+          if (response.data[0].user_registered_exams[0] != undefined) {
+            this.checkAccess(response.data[0].user_registered_exams[0].exam);
+          }
         })
         .catch((err) => {
           this.$swal("مشکلی پیش آمد!", err.message, "error");
-          if (err.response.status == 401) {
+          if (err.status == 401) {
             this.$cookies.set("userEntered", false);
             this.$cookies.set("adminEntered", false);
             this.$router.push({ name: "SignupLogin" });
