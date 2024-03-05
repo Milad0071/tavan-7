@@ -2,20 +2,20 @@
   <v-app class="mainApp">
     <div :key="resetKey">
       <!-- user nav bars -->
-        <AppBar
-          :key="userComponentKeyBar"
-          @user-rerender-drawer="userForceRender"
-          v-if="!$route.meta.hideNavbar && show == true"
-        />
-        <Drawer
-          :key="userComponentKeyDrawer"
-          :renderToken="renderToken"
-          v-if="!$route.meta.hideNavbar && show == true"
-        />
-      </div>
-      <router-view
-      @reset-app="forceReset"
-      @user-rerender-drawer="userForceRender"
+      <AppBar
+        :key="userComponentKeyBar"
+        @user-rerender-drawer="userForceRender"
+        v-if="!$route.meta.hideNavbar && show == true"
+      />
+      <Drawer
+        :key="userComponentKeyDrawer"
+        :renderToken="renderToken"
+        v-if="!$route.meta.hideNavbar && show == true"
+      />
+    </div>
+    <router-view
+    @reset-app="forceReset"
+    @user-rerender-drawer="userForceRender"
     />
   </v-app>
 </template>

@@ -64,26 +64,26 @@
 </template>
 
 <script>
-import axios from "./../axios.js";
+// import axios from "./../axios.js";
 import tavanHaftLogo from "./../assets/svgIcons/loginLogo.vue";
-import Home from "./../assets/svgIcons/homeIcon.vue";
-import UsersDetailsIcon from "./../assets/svgIcons/UsersDetailsIcon.vue";
-import GrayExitAccountNavigationDrawer from "../assets/svgIcons/GrayExitAccountNavigationDrawer.vue";
+// import Home from "./../assets/svgIcons/homeIcon.vue";
+// import UsersDetailsIcon from "./../assets/svgIcons/UsersDetailsIcon.vue";
+// import GrayExitAccountNavigationDrawer from "../assets/svgIcons/GrayExitAccountNavigationDrawer.vue";
 
 export default {
   props: { renderToken: Number },
   components: {
     tavanHaftLogo,
-    Home,
-    UsersDetailsIcon,
-    GrayExitAccountNavigationDrawer,
+    // Home,
+    // UsersDetailsIcon,
+    // GrayExitAccountNavigationDrawer,
   },
   data: () => ({
     homeActive: false,
     usersDetailsActive: false,
   }),
   mounted() {
-    this.showChosenPage();
+    // this.showChosenPage();
   },
   methods: {
     showChosenPage() {

@@ -77,6 +77,8 @@ export default {
           console.log(response);
           this.examId = response.data[0].id;
           this.$cookies.set("examId", this.examId);
+          this.$cookies.set("currentUserName", response.data[0].first_name.first_name);
+          this.$emit('reset-app');
           this.checkAccess(response.data[0].user_registered_exams[0].exam);
         })
         .catch((err) => {

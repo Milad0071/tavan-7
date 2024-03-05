@@ -69,7 +69,7 @@
                   class="ml-2 mr-5 space-y-0.5 text-right"
                 >
                   <p class="topText">{{ this.currentUserName }}</p>
-                  <p class="bottomText">{{ this.currentUserRole }}</p>
+                  <p class="bottomText">کاربر</p>
                 </div>
                 <v-icon
                   size="x-large"
@@ -112,7 +112,7 @@ export default {
     todayDate: "",
     items: [
       {
-        id: 3,
+        id: 1,
         title: "خروج از حساب",
         icon: "mdi-logout-variant",
       },
@@ -121,73 +121,20 @@ export default {
   }),
   created() {
     this.currentUserName = this.$cookies.get("currentUserName");
-    this.currentUserRole = this.$cookies.get("currentUserRole");
+    console.log(this.$cookies.get("currentUserName"))
     // this.getData();
     this.setJalaliDate();
   },
   methods: {
     goToItem(id) {
       if (id == 1) {
-        this.$emit("user-rerender-drawer", 2);
-        this.$cookies.remove("addChildActive");
-        this.$cookies.remove("parentsDetailsActive");
-        this.$router.push({ name: "ParentsDetails" });
-      } else if (id == 2) {
-        this.$emit("user-rerender-drawer", 3);
-        this.$cookies.remove("addChildActive");
-        this.$cookies.remove("parentsDetailsActive");
-        this.$cookies.remove("coursesShopActive");
-        this.$router.push({ name: "courseShop" });
-      } else if (id == 3) {
-        var bodyFormData = new FormData();
-        JSON.stringify(
-          bodyFormData.append("token", this.$cookies.get("userRefreshToken"))
-        );
-        axios({
-          method: "POST",
-          url: `account/logout/`,
-          headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${this.$cookies.get("userToken")}`,
-          },
-          data: bodyFormData,
-        })
-          .then((response) => {
-            if (response.status == 200) {
-              this.$cookies.remove("addChildActive");
-              this.$cookies.remove("parentsDetailsActive");
-              this.$cookies.remove("coursesShopActive");
-              this.$cookies.remove("userToken");
-              this.$cookies.set("userEntered", false);
-              this.$cookies.remove("userToken");
-              this.$cookies.remove("userRefreshToken");
-              this.$cookies.remove("currentUserName");
-              this.$cookies.remove("currentUserRole");
-              this.$router.push({ name: "SignupLogin" });
-            } else if (response.status == 401 || response.status == 403) {
-              this.$cookies.set("userEntered", false);
-              this.$cookies.set("adminEntered", false);
-              this.$cookies.remove("currentUserName");
-              this.$cookies.remove("currentUserRole");
-              this.$router.push({ name: "SignupLogin" });
-              this.$swal("مشکلی پیش آمد!", response.message, "error");
-              this.verificationBtnLoading = false;
-            } else {
-              this.$swal("مشکلی پیش آمد، لطفا مجدد تلاش نمایید!", "error");
-              this.verificationBtnLoading = false;
-            }
-          })
-          .catch((err) => {
-            if (err.request.status == 401 || err.request.status == 403) {
-              this.$cookies.set("userEntered", false);
-              this.$cookies.set("adminEntered", false);
-              this.$cookies.remove("currentUserName");
-              this.$cookies.remove("currentUserRole");
-              this.$router.push({ name: "SignupLogin" });
-              this.$swal("مشکلی پیش آمد!", err.message, "error");
-              this.verificationBtnLoading = false;
-            }
-          });
+        this.$cookies.remove("usersDetailsActive");
+        this.$cookies.remove("userToken");
+        this.$cookies.set("userEntered", false);
+        this.$cookies.remove("userToken");
+        this.$cookies.remove("userRefreshToken");
+        this.$cookies.remove("currentUserName");
+        this.$router.push({ name: "SignupLogin" });
       }
     },
     getData(perm) {
