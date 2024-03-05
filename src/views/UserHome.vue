@@ -4,8 +4,8 @@
       <div class="desktopInstagramContainer">
         <div class="desktopInstagramContent">
           <div class="desktopInstagramDescription">
-              <h2>کاربر گرامی این نسخه مخصوص رایانه است</h2>
-              <h2>لطفا با رایانه وارد شوید</h2>
+            <h2>کاربر گرامی این نسخه مخصوص رایانه است</h2>
+            <h2>لطفا با رایانه وارد شوید</h2>
           </div>
         </div>
       </div>
@@ -28,6 +28,7 @@
           <!-- button part -->
           <div class="btnContainer flex_class">
             <v-btn
+              :disabled="notShow"
               :loading="phoneBtnLoading"
               append-icon="mdi-arrow-left-thin"
               color="#A1834E"
@@ -40,6 +41,7 @@
               ورود به آزمون استرانگ
             </v-btn>
           </div>
+          <h3 v-if="notShow" class="mt-3" style="color: #a1834e">شما یک بار در این آزمون شرکت کرده‌اید</h3>
         </div>
       </div>
     </v-locale-provider>
@@ -52,9 +54,10 @@ export default {
   data() {
     return {
       phoneBtnLoading: false,
+      notShow: false,
       examId: "",
       quizQuestions: [],
-    }
+    };
   },
   created() {
     this.getExams();
@@ -63,22 +66,24 @@ export default {
     getExams() {
       axios({
         method: "GET",
-        url: `exam/list/?session=${this.$cookies.get('sessionId')}`,
+        url: `exam/list/?session=${this.$cookies.get("sessionId")}`,
         header: "application/json",
         headers: {
           Authorization: `Bearer ${this.$cookies.get("userToken")}`,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
       })
         .then((response) => {
+          console.log(response);
           this.examId = response.data[0].id;
-          this.$cookies.set('examId', this.examId)
+          this.$cookies.set("examId", this.examId);
+          this.checkAccess(response.data[0].user_registered_exams[0].exam);
         })
         .catch((err) => {
           this.$swal("مشکلی پیش آمد!", err.message, "error");
           if (err.response.status == 401) {
-            this.$cookies.set('userEntered', false);
-            this.$cookies.set('adminEntered', false);
+            this.$cookies.set("userEntered", false);
+            this.$cookies.set("adminEntered", false);
             this.$router.push({ name: "SignupLogin" });
           }
         });
@@ -86,11 +91,13 @@ export default {
     registerQuiz() {
       axios({
         method: "GET",
-        url: `exam/register/${this.examId}/?session=${this.$cookies.get('sessionId')}`,
+        url: `exam/register/${this.examId}/?session=${this.$cookies.get(
+          "sessionId"
+        )}`,
         header: "application/json",
         headers: {
           Authorization: `Bearer ${this.$cookies.get("userToken")}`,
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
       })
         .then(() => {
@@ -99,17 +106,22 @@ export default {
         .catch((err) => {
           this.$swal("مشکلی پیش آمد!", err.message, "error");
           if (err.response.status == 401) {
-            this.$cookies.set('userEntered', false);
-            this.$cookies.set('adminEntered', false);
+            this.$cookies.set("userEntered", false);
+            this.$cookies.set("adminEntered", false);
             this.$router.push({ name: "SignupLogin" });
           }
         });
     },
+    checkAccess(exam) {
+      if (exam == this.examId) {
+        this.notShow = true;
+      }
+    },
     goToQuiz() {
       this.$router.push({ name: "quizPage" });
     },
-  }
-}
+  },
+};
 </script>
 <style scoped>
 .flex_class {
@@ -168,7 +180,7 @@ export default {
 .desktopInstagramContainer {
   display: none;
 }
-@media screen and (max-width:1209px) {
+@media screen and (max-width: 1209px) {
   .mainPart {
     display: none;
   }

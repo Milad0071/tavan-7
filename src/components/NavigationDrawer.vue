@@ -7,10 +7,10 @@
       class="navigationClass"
     >
       <div class="logoPart">
-        <tavanHaftLogo style="width: 80%" />
+        <tavanHaftLogo style="width: 150%" />
       </div>
 
-      <v-list class="drawerList flex_column_class" density="compact" nav>
+      <!-- <v-list class="drawerList flex_column_class" density="compact" nav>
         <div class="linksClass">
           <v-list-item
             class="homeItem"
@@ -58,7 +58,7 @@
             </p>
           </v-list-item>
         </div>
-      </v-list>
+      </v-list> -->
     </v-navigation-drawer>
   </v-locale-provider>
 </template>
@@ -194,9 +194,10 @@ export default {
 .logoPart {
   width: 100%;
   height: 30%;
+  margin-right: 20%;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
 }
 .drawerList {
   font-size: 15px !important;
@@ -249,5 +250,10 @@ export default {
 }
 .v-list-item--variant-text .v-list-item__overlay {
   background: #00aaa3;
+}
+.navigationClass > .v-navigation-drawer__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
