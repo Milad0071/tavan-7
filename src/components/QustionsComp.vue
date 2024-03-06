@@ -27,6 +27,18 @@
           </div>
         </div>
         <!-- <h2>{{ quizTitle }}:</h2> -->
+        <div class="flex_class paginateClass ss03">
+          <v-pagination
+            v-model="current"
+            :length="totalPages"
+            :total-visible="totalPages"
+          ></v-pagination>
+        </div>
+        <div class="endExamBtnContainer flex_class">
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            پایان آزمون
+          </v-btn>
+        </div>
         <div
           v-for="(question, index) in paginated"
           :key="index"
@@ -41,7 +53,31 @@
               class="flex_class topPart"
               style="border-bottom: 1px solid black"
             >
-              <v-radio-group v-model="chosenAnswer[question.id]">
+              <v-radio-group
+                v-if="question.disableStatus == true"
+                :disabled="true"
+                v-model="chosenAnswer[question.id]"
+              >
+                <div class="toggleBtn">
+                  <v-btn-toggle
+                    color="#00AAA3"
+                    density="compact"
+                    divided
+                    v-model="chosenAnswer[question.id]"
+                  >
+                    <v-btn><h3>بسیار علاقه‌مندم</h3></v-btn>
+                    <v-btn><h3>علاقه‌مندم</h3></v-btn>
+                    <v-btn><h3>بی‌تفاوت</h3></v-btn>
+                    <v-btn><h3>علاقه‌مند نیستم</h3></v-btn>
+                    <v-btn><h3>اصلا علاقه‌مند نیستم</h3></v-btn>
+                  </v-btn-toggle>
+                </div>
+              </v-radio-group>
+              <v-radio-group
+                v-else
+                :disabled="false"
+                v-model="chosenAnswer[question.id]"
+              >
                 <div class="toggleBtn">
                   <v-btn-toggle
                     color="#00AAA3"
@@ -64,10 +100,10 @@
           <v-pagination
             v-model="current"
             :length="totalPages"
-            total-visible="3"
+            :total-visible="totalPages"
           ></v-pagination>
         </div>
-        <div v-if="this.showNext" class="endExamBtnContainer flex_class">
+        <div class="endExamBtnContainer flex_class">
           <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
             پایان آزمون
           </v-btn>
@@ -80,20 +116,23 @@
 import axios from "./../axios.js";
 
 export default {
-  props: { quizArray: Array },
+  emits: ["next-module-id", "close-page"],
+  props: { quizArray: Array, currentQuizId: Number },
   data: () => {
     return {
-      showNext: false,
       scrollVal: true,
+      examStatus: false,
       answersCount: 0,
       answersLength: 0,
       current: 1,
       pageSize: 10,
       totalPages: null,
+      nextId: null,
       examName: "",
       quizTitle: "",
       quizDescription: "",
       questionsArray: [],
+      answerdQuestions: [],
       chosenAnswer: [],
       pointsArray: [
         {
@@ -147,13 +186,9 @@ export default {
     },
     chosenAnswer: {
       handler(newVal) {
-        this.showNext = true;
         if (newVal.length != this.answersLength) {
           this.answersLength = newVal.length;
           this.answersCount += 1;
-          if (this.answersCount == 290) {
-            this.showNext = true;
-          }
         }
       },
       deep: true,
@@ -171,57 +206,75 @@ export default {
     },
   },
   created() {
-    this.setQuestions();
+    console.log(this.quizArray);
+    this.answerdQuestions = this.makeRightPoints();
     this.examName = this.$cookies.get("examName");
   },
+  mounted() {
+    this.setQuestions();
+  },
   methods: {
+    makeRightPoints() {
+      console.log(this.quizArray);
+      if (
+        this.quizArray[this.quizArray.length - 1].answered_questions != null ||
+        this.quizArray[this.quizArray.length - 1].answered_questions !=
+          undefined
+      ) {
+        var tempArray =
+          this.quizArray[this.quizArray.length - 1].answered_questions;
+        for (let i = 0; i < tempArray.length; i++) {
+          if (tempArray[i].answer == 2) {
+            tempArray[i].answer = 0;
+          } else if (tempArray[i].answer == 1) {
+            tempArray[i].answer = 1;
+          } else if (tempArray[i].answer == 0) {
+            tempArray[i].answer = 2;
+          } else if (tempArray[i].answer == -1) {
+            tempArray[i].answer = 3;
+          } else if (tempArray[i].answer == -2) {
+            tempArray[i].answer = 4;
+          }
+        }
+        return tempArray;
+      }
+    },
     setQuestions() {
-      this.quizTitle = this.quizArray[0].name;
-      this.quizDescription = this.quizArray[0].description;
-      this.questionsArray = this.quizArray[0].questions;
-      for (let i = 0; i < this.questionsArray.length; i++) {
-        this.questionsArray[i].quizNum = i + 1;
+      this.quizTitle = this.quizArray[this.quizArray.length - 1].name;
+      this.quizDescription =
+        this.quizArray[this.quizArray.length - 1].description;
+      this.questionsArray = this.quizArray[this.quizArray.length - 1].questions;
+      if (this.answerdQuestions) {
+        for (let i = 0; i < this.questionsArray.length; i++) {
+          for (let j = 0; j < this.answerdQuestions.length; j++) {
+            if (
+              this.questionsArray[i].id == this.answerdQuestions[j].question
+            ) {
+              this.questionsArray[i].disableStatus = true;
+              this.chosenAnswer[this.answerdQuestions[j].question] =
+                this.answerdQuestions[j].answer;
+            } else {
+              this.questionsArray[i].disableStatus = false;
+            }
+          }
+          this.questionsArray[i].quizNum = i + 1;
+        }
+      } else {
+        for (let i = 0; i < this.questionsArray.length; i++) {
+          this.questionsArray[i].quizNum = i + 1;
+        }
       }
       this.totalPages = Math.ceil(this.questionsArray.length / this.pageSize);
     },
     scroll() {
-      console.log(this.chosenAnswer.length, this.questionsArray.length);
-      var count = 0;
-      for (let j = 0; j < this.chosenAnswer.length; j++) {
-        if (this.chosenAnswer[j] != undefined) {
-          count += 1;
-        }
-      }
-      if (
-        this.current == this.totalPages &&
-        count == this.questionsArray.length
-      ) {
-        this.showNext = true;
-      } else if (
-        this.current == this.totalPages &&
-        count != this.questionsArray.length
-      ) {
-        this.$swal(
-          "توجه!",
-          "جهت پایان دادن آزمون باید به همه سوالات پاسخ داده باشید",
-          "warning"
-        );
-      } else {
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: "smooth",
-        });
-        this.showNext = false;
-      }
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
     },
     endExam() {
-      // this.$cookies.remove("examStarted");
-      // this.$cookies.set("resetPage");
-      // this.$cookies.remove("stay");
-      // this.$router.push({ name: "Home" });
-      for (let i = 5; i < this.chosenAnswer.length; i++) {
-        console.log(i, this.chosenAnswer[i]);
+      for (let i = 6; i < this.chosenAnswer.length; i++) {
         if (this.chosenAnswer[i] == 0) {
           this.chosenAnswer[i] = 2;
         } else if (this.chosenAnswer[i] == 1) {
@@ -234,41 +287,100 @@ export default {
           this.chosenAnswer[i] = -2;
         }
       }
-      console.log(this.chosenAnswer);
+      if (this.answerdQuestions) {
+        for (let k = 0; k < this.answerdQuestions.length; k++) {
+          for (let j = 6; j < this.chosenAnswer.length; j++) {
+            if (j == this.answerdQuestions[k].question) {
+              delete this.chosenAnswer[j];
+              break;
+            }
+          }
+        }
+      }
       var result = this.chosenAnswer.reduce((agg, item, index) => {
-        console.log(agg, item, index);
         agg[index] = item;
         return agg;
       }, {});
-      console.log(result);
+      var count = 0;
+      for (let j = 0; j < this.chosenAnswer.length; j++) {
+        if (this.chosenAnswer[j] != undefined) {
+          count += 1;
+        }
+      }
+      if (this.currentQuizId == 0) {
+        if (this.answerdQuestions) {
+          count = count + this.answerdQuestions.length + 1;
+        } else {
+          count = count + 1;
+        }
+      } else {
+        if (this.answerdQuestions) {
+          count = count + this.answerdQuestions.length;
+        }
+      }
+      console.log(this.currentQuizId);
+      if (this.currentQuizId == 5) {
+        this.examStatus = true;
+      }
       var data = {
         answers: result,
+        is_complete: this.examStatus,
       };
-      axios({
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.$cookies.get("userToken")}`,
-        },
-        url: `exam/qs-post/${this.$cookies.get(
-          "examId"
-        )}/?session=${this.$cookies.get("sessionId")}`,
-        data: JSON.stringify(data),
-      })
-        .then((response) => {
-          console.log(response);
-          this.$cookies.remove("examStarted");
-          this.$cookies.set("resetPage");
-          this.$router.push({ name: "Home" });
+      if (this.examStatus == true) {
+        axios({
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.$cookies.get("userToken")}`,
+          },
+          url: `exam/qs-post/${this.$cookies.get(
+            "examId"
+          )}/?session=${this.$cookies.get("sessionId")}`,
+          data: JSON.stringify(data),
         })
-        .catch((err) => {
-          this.$swal("مشکلی پیش آمد!", err.message, "error");
-          if (err.response.status == 401) {
-            this.$cookies.set("userEntered", false);
-            this.$cookies.set("adminEntered", false);
-            this.$router.push({ name: "SignupLogin" });
-          }
-        });
+          .then(() => {
+            this.$router.push({ name: "Home" });
+          })
+          .catch((err) => {
+            this.$swal("مشکلی پیش آمد!", err.message, "error");
+            if (err.response.status == 401) {
+              this.$cookies.set("userEntered", false);
+              this.$router.push({ name: "SignupLogin" });
+            }
+          });
+      } else {
+        axios({
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.$cookies.get("userToken")}`,
+          },
+          url: `exam/qs-post/${this.$cookies.get(
+            "examId"
+          )}/?session=${this.$cookies.get("sessionId")}`,
+          data: JSON.stringify(data),
+        })
+          .then(() => {
+            console.log(this.currentQuizId);
+            if (count == this.questionsArray.length) {
+              this.$swal(`رسته ${this.quizTitle} تکمیل شد`, "", "success");
+              this.nextId = this.currentQuizId + 1;
+              this.$emit("next-module-id", this.nextId);
+            } else {
+              this.$swal("ثبت موفق پاسخ‌ها", "", "success").then(() => {
+                this.$router.push({ name: "Home" });
+              });
+            }
+          })
+          .catch((err) => {
+            this.$swal("مشکلی پیش آمد!", err.message, "error");
+            if (err.response.status == 401) {
+              this.$cookies.set("userEntered", false);
+              this.$cookies.set("adminEntered", false);
+              this.$router.push({ name: "SignupLogin" });
+            }
+          });
+      }
     },
   },
 };
@@ -291,7 +403,7 @@ export default {
   padding: 0%;
 }
 .pointsDiscription {
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-flow: column;
   justify-content: space-around;

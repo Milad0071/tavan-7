@@ -16,6 +16,8 @@
     <router-view
     @reset-app="forceReset"
     @user-rerender-drawer="userForceRender"
+    @reset-page="forceResetPage"
+    :key="resetForce"
     />
   </v-app>
 </template>
@@ -36,6 +38,7 @@ export default {
       userComponentKeyDrawer: 0,
       resetKey: 0,
       renderToken: 0,
+      resetForce: 0,
     };
   },
   created() {
@@ -51,6 +54,10 @@ export default {
     forceReset() {
       this.resetKey += 1;
       this.showBars();
+    },
+    forceResetPage() {
+      this.$router.push({ name: "Home" });
+      this.resetForce = + 1;
     },
     showBars() {
       setTimeout(() => {

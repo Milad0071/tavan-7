@@ -16,7 +16,7 @@
           <h3>دانشجوی عزیز، لطفا فرم زیر را تکمیل نمایید</h3>
         </div>
         <div class="inputContainer row">
-          <div class="input_part">
+          <div class="userDeatailsClass input_part">
             <!-- parent name -->
             <h4 class="loginText">نام</h4>
             <v-text-field
@@ -38,7 +38,7 @@
             <!-- parent last name -->
             <h4 class="loginText">نام خانوادگی</h4>
             <v-text-field
-              class="input_1"
+              class="userDeatailsClass input_1"
               variant="plain"
               placeholder="نام خانوادگی خود را وارد کنید"
               v-on:keydown="stopEnglishChars($event)"
@@ -55,7 +55,7 @@
           <div class="input_part">
             <h4 class="loginText">نام پدر</h4>
             <v-text-field
-              class="input_1"
+              class="userDeatailsClass input_1"
               variant="plain"
               placeholder="نام پدر خود را وارد کنید"
               v-on:keydown="stopEnglishChars($event)"
@@ -73,7 +73,7 @@
             <!-- national code input -->
             <h4 class="loginText">کد ملی</h4>
             <v-text-field
-              class="ltrClass input_1"
+              class="userDeatailsClass input_1"
               reverse
               variant="plain"
               v-on:keydown="stopAllChars($event)"
@@ -109,7 +109,7 @@
             <!-- Edjucation field -->
             <h4 class="loginText">تحصیلات</h4>
             <v-text-field
-              class="input_1"
+              class="userDeatailsClass input_1"
               variant="plain"
               placeholder="عنوان تحصیلات خود را وارد کنید"
               v-model="userEdjucation"
@@ -117,29 +117,10 @@
             </v-text-field>
           </div>
           <div class="input_part">
-            <!-- phone number field -->
-            <h4 class="loginText">تلفن همراه</h4>
-            <v-text-field
-              class="ltrClass input_1"
-              variant="plain"
-              reverse
-              placeholder="شماره تلفن همراه خود را وارد کنید"
-              v-on:keydown="stopAllChars($event)"
-              v-model="userPhoneNumber"
-            >
-            </v-text-field>
-            <p
-              v-if="userPhoneNumberError == true"
-              style="color: red; font-weight: fold"
-            >
-              فیلد تلفن همراه نباید خالی باشد!
-            </p>
-          </div>
-          <div class="input_part">
             <!-- Telephone field -->
             <h4 class="loginText">تلفن ثابت</h4>
             <v-text-field
-              class="ltrClass input_1"
+              class="userDeatailsClass input_1"
               variant="plain"
               reverse
               placeholder="شماره تلفن ثابت خود را وارد کنید"
@@ -171,8 +152,7 @@
                 userNationalCode,
                 userBirthDay,
                 userEdjucation,
-                userPhoneNumber,
-                userTelephone,
+                userTelephone
               )
             "
           >
@@ -213,7 +193,6 @@ export default {
       userFatherNameError: false,
       userNationalCodeError: false,
       userEdjucationError: false,
-      userPhoneNumberError: false,
       userTelephoneError: false,
       userBirthDayError: false,
       userName: "",
@@ -222,7 +201,6 @@ export default {
       userNationalCode: "",
       userBirthDay: "",
       userEdjucation: "",
-      userPhoneNumber: "",
       userTelephone: "",
     };
   },
@@ -259,18 +237,12 @@ export default {
         this.userEdjucationError = false;
       }
     },
-    userPhoneNumber(newVal) {
-      this.userPhoneNumber = this.toFarsiNumber(newVal);
-      if (newVal.length > 0) {
-        this.userPhoneNumberError = false;
-      }
-    },
     userTelephone(newVal) {
       this.userTelephone = this.toFarsiNumber(newVal);
       if (newVal.length > 0) {
         this.userTelephoneError = false;
       }
-    }
+    },
   },
   methods: {
     stopAllChars(e) {
@@ -414,14 +386,12 @@ export default {
             this.userLastNameError = true;
           } else if (i == 2) {
             this.userFatherNameError = true;
-          } else if (i == 4) {
-            this.userNationalCodeError = true;
-          } else if (i == 5) {
-            this.userBirthDayError = true;
-          } else if (i == 7) {
-            this.userEdjucationError = true;
           } else if (i == 3) {
-            this.userPhoneNumberError = true;
+            this.userNationalCodeError = true;
+          } else if (i == 4) {
+            this.userBirthDayError = true;
+          } else if (i == 5) {
+            this.userEdjucationError = true;
           } else if (i == 6) {
             this.userTelephoneError = true;
           }
@@ -457,8 +427,7 @@ export default {
       userNationalCode,
       userBirthDay,
       userEdjucation,
-      userPhoneNumber,
-      userTelephone,
+      userTelephone
     ) {
       this.phoneBtnLoading = true;
       let itemArray = [
@@ -468,8 +437,7 @@ export default {
         userNationalCode,
         userBirthDay,
         userEdjucation,
-        userPhoneNumber,
-        userTelephone
+        userTelephone,
       ];
       if (this.emptyCheck(itemArray) == true) {
         userNationalCode = this.toEnglishNumber(userNationalCode);
@@ -477,7 +445,6 @@ export default {
           first_name: userName,
           last_name: userLastName,
           national_code: userNationalCode,
-          phone_number: userPhoneNumber,
           user_profile: {
             father_name: userFatherName,
             education: userEdjucation,
@@ -516,12 +483,17 @@ export default {
           })
           .catch((err) => {
             this.phoneBtnLoading = false;
-            this.$swal("مشکلی پیش آمد!", err.message, "error");
-            if (err.response.status == 401) {
+            if (err.status == 400) {
+              this.$swal("مشکلی پیش آمد!", "کد ملی وارد شده قبلا ثبت شده است!", "error");
+            } else if (err.status == 401) {
               this.$cookies.set("userEntered", false);
               this.$router.push({ name: "SignupLogin" });
+            } else {
+              this.$swal("مشکلی پیش آمد!", err.message, "error");
             }
           });
+      } else {
+        this.phoneBtnLoading = false;
       }
     },
   },
@@ -550,7 +522,7 @@ export default {
   font-weight: bold;
 }
 .titleShape {
-  border: 3px solid #00AAA3;
+  border: 3px solid #00aaa3;
   border-radius: 7px;
 }
 .inputContainer {
@@ -578,7 +550,7 @@ export default {
 .loginText {
   text-align: right;
   font-size: 20px;
-  color: #A1834E;
+  color: #a1834e;
   font-weight: 700;
   margin-bottom: 10px;
 }
@@ -602,7 +574,7 @@ export default {
 .datePickerClass {
   min-height: 50px;
   border-radius: 7px;
-  color: #A1834E;
+  color: #a1834e;
 }
 .btnContainer {
   width: 100%;
@@ -611,13 +583,13 @@ export default {
 .submitBtn {
   font-weight: bold;
   color: white !important;
-  background-color: #00AAA3;
+  background-color: #00aaa3;
   width: 44%;
   border-radius: 12px;
 }
 .closeBtn {
   font-weight: bold;
-  color: #A1834E !important;
+  color: #a1834e !important;
   width: 44%;
   margin-right: 5%;
   border-radius: 12px;
@@ -625,7 +597,7 @@ export default {
 .desktopInstagramContainer {
   display: none;
 }
-@media screen and (max-width:1209px) {
+@media screen and (max-width: 1209px) {
   .mainContainer {
     display: none;
   }
@@ -647,7 +619,7 @@ export default {
 }
 .vpd-input-group label {
   border-radius: 0px 7px 7px 0px;
-  background-color: #00AAA3 !important;
+  background-color: #00aaa3 !important;
 }
 .vpd-input-group input:not(.vpd-is-editable) {
   border-radius: 7px 0px 0px 7px;
@@ -660,21 +632,16 @@ export default {
 .v-field--variant-plain .v-label.v-field-label {
   top: 20% !important;
 }
-.ltrClass > .v-field--variant-underlined .v-label.v-field-label,
-.v-field--variant-plain .v-label.v-field-label {
-  right: 0 !important;
-  margin-top: 2% !important;
+.userDeatailsClass > .v-text-field .v-field--no-label input,
+.v-text-field .v-field--active input {
+  margin-top: -1%;
 }
-.textareaClass > .v-field--variant-underlined .v-label.v-field-label,
-.v-field--variant-plain .v-label.v-field-label {
-  right: 0 !important;
-  margin-top: 2% !important;
-}
-.ltrClass {
+.userDeatailsClass {
   position: relative;
 }
-.ltrClass input::placeholder {
+.userDeatailsClass input::placeholder {
   position: absolute;
+  margin-top: -1%;
 }
 .v-input__details {
   min-height: 0 !important;
@@ -689,13 +656,13 @@ export default {
   border: none !important;
 }
 .datePickerClass svg {
-  fill: #A1834E !important;
+  fill: #a1834e !important;
 }
 .vpd-content {
   border-radius: 12px;
 }
 .vpd-main *,
 .vpd-wrapper * {
-  color: #00AAA3 !important;
+  color: #00aaa3 !important;
 }
 </style>

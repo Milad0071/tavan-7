@@ -4,8 +4,8 @@
       <div class="desktopInstagramContainer">
         <div class="desktopInstagramContent">
           <div class="desktopInstagramDescription">
-              <h2>کاربر گرامی این نسخه مخصوص رایانه است</h2>
-              <h2>لطفا با رایانه وارد شوید</h2>
+            <h2>کاربر گرامی این نسخه مخصوص رایانه است</h2>
+            <h2>لطفا با رایانه وارد شوید</h2>
           </div>
         </div>
       </div>
@@ -21,8 +21,8 @@
                 <div class="flex_column_class">
                   <h2 style="color: #a1834e">ورود/ ثبت‌ نام توان ۷</h2>
                   <h3 class="mt-2" style="color: #a1834e">
-                    به توان ۷ خوش اومدی! جهت ورود یا ثبت‌ نام، شماره همراهتو وارد
-                    کن
+                    به توان ۷ خوش اومدی! جهت ورود یا ثبت‌ نام، شماره همراهتو
+                    وارد کن
                   </h3>
                 </div>
                 <!-- phone input -->
@@ -30,8 +30,9 @@
                   <h4 class="loginText">تلفن همراه</h4>
                   <v-text-field
                     class="ltrClass input_1"
+                    ref="focusPhone"
                     reverse
-                    v-on:keydown="stopChars($event)"
+                    v-on:keydown="stopChars($event), sendRequest($event)"
                     variant="plain"
                     placeholder="شماره تلفن همراه خود را وارد کنید"
                     v-model="userPhoneNum"
@@ -61,8 +62,7 @@
                     <v-otp-input
                       v-model="otp"
                       class="ss03"
-                      ref="focusMe"
-                      divider=" "
+                      ref="focusOtp"
                       autofocus
                       reverse
                       variant="plain"
@@ -199,6 +199,9 @@ export default {
       }
     },
   },
+  created() {
+    this.$nextTick(() => this.$refs.focusPhone.focus());
+  },
   methods: {
     stopChars(e) {
       if (e.key.match(/^[a-zA-Z]*$/) && !(e.key == "Backspace")) {
@@ -269,7 +272,7 @@ export default {
               this.$cookies.set("sessionId", response.data);
               this.phoneBtnLoading = false;
               this.showVerificationPart = true;
-              this.$nextTick(() => this.$refs.focusMe.focus());
+              this.$nextTick(() => this.$refs.focusOtp.focus());
             } else {
               this.$swal("مشکلی پیش آمد!", response.message, "error");
               this.phoneBtnLoading = false;
@@ -299,6 +302,11 @@ export default {
           });
       } else {
         this.phoneBtnLoading = false;
+      }
+    },
+    sendRequest(e) {
+      if (e.code == "Enter") {
+        this.logninFunc(this.userPhoneNum);
       }
     },
     countDownTimer() {
@@ -345,12 +353,12 @@ export default {
         data: bodyFormData,
       })
         .then((response) => {
-          console.log(response)
+          console.log(response);
           if (response.status == 200 || response.status == 201) {
             if (response.data.is_registered == false) {
               this.showVerificationPart = false;
               this.verificationBtnLoading = false;
-              this.$cookies.set('firstTimeUsersDetails');
+              this.$cookies.set("firstTimeUsersDetails");
               this.$router.push({ name: "usersDetails" });
             } else {
               this.$cookies.set("userToken", response.data.access);
@@ -437,13 +445,13 @@ export default {
 .picPart {
   width: 110vh;
   height: 102vh;
-  background-image: url("./../assets/loginPic.jpg");
+  background-image: url("./../assets/loginPic.png");
   background-size: cover;
 }
 .verificationPicPart {
   width: 110vh;
   height: 98vh;
-  background-image: url("./../assets/loginPic.jpg");
+  background-image: url("./../assets/loginPic.png");
   background-size: cover;
 }
 .loginPartContainer {
@@ -501,7 +509,7 @@ input::-moz-placeholder {
 .btnContainer {
   width: 90%;
   margin-top: 5%;
-  margin-bottom: 20%;
+  margin-bottom: 4%;
 }
 .childBtn {
   font-weight: bold;
@@ -532,7 +540,7 @@ input::-moz-placeholder {
 .desktopInstagramContainer {
   display: none;
 }
-@media screen and (max-width:1209px) {
+@media screen and (max-width: 1209px) {
   .mainBody {
     display: none;
   }

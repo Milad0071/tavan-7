@@ -20,9 +20,7 @@
             <div class="flex_column_class mb-2" style="width: 100%">
               <div class="flex_column_class" style="width: 100%">
                 <p class="dateClass">تاریخ: {{ todayDate }}</p>
-                <v-card-title>
-                  {{ examName }}
-                </v-card-title>
+                <v-card-title> پرسشنامه رغبت سنجی شغلی استرانگ </v-card-title>
               </div>
               <v-card-subtitle
                 style="font-weight: bold; font-size: 16px; color: #a1834e"
@@ -71,6 +69,7 @@
               <!-- start key -->
               <div class="btnContainer flex_class">
                 <v-btn
+                  :disabled="notShowStart"
                   color="#00AAA3"
                   class="text-none submitBtn"
                   size="large"
@@ -90,7 +89,13 @@
           class="flex_column_class questionsCardClass"
         >
           <!-- questions component -->
-          <QuestionsComp :quizArray="quizArray"></QuestionsComp>
+          <QuestionsComp
+            :quizArray="quizArray"
+            :currentQuizId="nextQuizId"
+            @next-module-id="startNextQuiz"
+            @close-page="closePage"
+            :key="compReset"
+          ></QuestionsComp>
         </v-card>
       </div>
     </v-locale-provider>
@@ -101,18 +106,23 @@ import QuestionsComp from "./../components/QustionsComp.vue";
 import axios from "./../axios.js";
 
 export default {
+  emits: ["reset-page"],
   components: { QuestionsComp },
   data: () => {
     return {
+      compReset: 0,
+      nextQuizId: 0,
       quizArray: [],
+      modules: [],
       goToQuestions: false,
+      notShowStart: true,
       todayDate: null,
       examName: "",
     };
   },
   created() {
     this.setJalaliDate();
-    this.startQuiz();
+    this.getModules();
   },
   methods: {
     setJalaliDate() {
@@ -123,12 +133,10 @@ export default {
       };
       this.todayDate = new Date().toLocaleDateString("fa-IR", options);
     },
-    startQuiz() {
+    getModules() {
       axios({
         method: "GET",
-        url: `exam/start/${this.$cookies.get(
-          "examId"
-        )}/?session=${this.$cookies.get("sessionId")}`,
+        url: `exam/list/?session=${this.$cookies.get("sessionId")}`,
         header: "application/json",
         headers: {
           Authorization: `Bearer ${this.$cookies.get("userToken")}`,
@@ -136,27 +144,70 @@ export default {
         },
       })
         .then((response) => {
-          console.log(response);
-          this.examName = response.data.name;
-          this.$cookies.set("examName", this.examName);
-          this.quizArray.push(response.data.module[0]);
-            if (this.$cookies.get("examStarted")) {
-              this.goToQuestions = true;
-            }
+          this.modules = response.data[0].modules;
+          this.startQuiz(this.modules[this.nextQuizId].id);
         })
         .catch((err) => {
           this.$swal("مشکلی پیش آمد!", err.message, "error");
-          if (err.response.status == 401) {
+          if (err.status == 401) {
             this.$cookies.set("userEntered", false);
             this.$cookies.set("adminEntered", false);
             this.$router.push({ name: "SignupLogin" });
           }
         });
     },
+    startQuiz(id) {
+      axios({
+        method: "GET",
+        url: `exam/start/${this.$cookies.get(
+          "examId"
+        )}/${id}/?session=${this.$cookies.get("sessionId")}`,
+        header: "application/json",
+        headers: {
+          Authorization: `Bearer ${this.$cookies.get("userToken")}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          this.examName = response.data.name;
+          this.$cookies.set("examName", this.examName);
+          this.quizArray.push(response.data);
+          console.log(this.quizArray.length);
+          if (this.quizArray.length > 0) {
+            this.notShowStart = false;
+          }
+          this.compReset += 1;
+          // if (this.$cookies.get("examStarted")) {
+          //   this.goToQuestions = true;
+          // }
+        })
+        .catch((err) => {
+          if (err.response.status == 401) {
+            this.$cookies.set("userEntered", false);
+            this.$cookies.set("adminEntered", false);
+            this.$router.push({ name: "SignupLogin" });
+          } else {
+            this.$swal("مشکلی پیش آمد!", err.message, "error");
+          }
+        });
+    },
+    startNextQuiz(n) {
+      console.log(n, this.modules.length);
+      if (n != this.modules.length) {
+        this.nextQuizId = n;
+        console.log(this.modules[this.nextQuizId].id);
+        this.startQuiz(this.modules[this.nextQuizId].id);
+        this.compReset += 1;
+      }
+    },
     goToQuestionsFunc() {
       this.$cookies.set("examStarted");
       this.goToQuestions = true;
     },
+    closePage() {
+      this.goToQuestions = false;
+      this.$emit("reset-page");
+    }
   },
 };
 </script>
@@ -250,7 +301,7 @@ export default {
 .desktopInstagramContainer {
   display: none;
 }
-@media screen and (max-width:1209px) {
+@media screen and (max-width: 1209px) {
   .mainContainer {
     display: none;
   }
