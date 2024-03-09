@@ -305,7 +305,8 @@ export default {
       }
     },
     sendRequest(e) {
-      if (e.code == "Enter") {
+      console.log(e);
+      if (e.code == "Enter" || e.code == "NumpadEnter") {
         this.logninFunc(this.userPhoneNum);
       }
     },
@@ -353,7 +354,6 @@ export default {
         data: bodyFormData,
       })
         .then((response) => {
-          console.log(response);
           if (response.status == 200 || response.status == 201) {
             if (response.data.is_registered == false) {
               this.showVerificationPart = false;

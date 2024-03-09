@@ -79,7 +79,6 @@ router.beforeEach((to, from, next) => {
       return next({ path: "/" });
     }
   } else {
-    console.log("fuck this shit");
     return next();
     // return next();
     // if (to.name == "SignupLogin") {

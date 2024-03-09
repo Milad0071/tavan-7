@@ -76,7 +76,6 @@ export default {
         },
       })
         .then((response) => {
-          console.log(response);
           this.examId = response.data[0].id;
           this.$cookies.set("examId", this.examId);
           this.$cookies.set(

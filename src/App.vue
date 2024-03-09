@@ -60,7 +60,6 @@ export default {
       this.resetForce = + 1;
     },
     showBars() {
-      console.log(this.$route.name)
       setTimeout(() => {
         if (
           this.$route.name == "SignupLogin" ||
@@ -72,7 +71,6 @@ export default {
         } else {
           this.$router.push({ path: "/" });
           this.resetForce += 1;
-          console.log(this.resetForce)
         }
       }, 300);
     },

@@ -325,7 +325,6 @@ export default {
               ) {
                 this.answersLength = newVal.length;
                 this.answersCount += 1;
-                console.log(this.answersCount, this.questionsArray.length);
                 if (
                   this.questionsArray.length == this.answersCount &&
                   this.currentQuizId != 5
@@ -358,7 +357,6 @@ export default {
             ) {
               this.answersLength = newVal.length;
               this.answersCount += 1;
-              console.log(this.answersCount, this.questionsArray.length);
               if (
                 this.questionsArray.length == this.answersCount &&
                 this.currentQuizId != 5
@@ -436,29 +434,14 @@ export default {
       this.questionsArray = this.quizArray[this.quizArray.length - 1].questions;
 
       if (this.answerdQuestions) {
-        // this.answeredExist = true;
-        // if (this.answerdQuestions.length == this.questionsArray.length && this.currentQuizId != 5) {
-        //   this.showNextModule = true;
-        //   this.showRedirect = false;
-        //   this.showEndExam = false;
-        // } else if (this.answerdQuestions.length == this.questionsArray.length && this.currentQuizId == 5) {
-        //   this.showNextModule = false;
-        //   this.showRedirect = false;
-        //   this.showEndExam = true;
-        // } else {
-        //   this.showNextModule = false;
-        //   this.showRedirect = true;
-        //   this.showEndExam = false;
-        // }
-        // console.log(this.showRedirect, this.showNextModule, this.showEndExam, this.answeredExist)
         for (let i = 0; i < this.questionsArray.length; i++) {
           for (let j = 0; j < this.answerdQuestions.length; j++) {
             if (
               this.questionsArray[i].id == this.answerdQuestions[j].question
             ) {
               this.questionsArray[i].disableStatus = true;
-              this.chosenAnswer[this.answerdQuestions[j].question] =
-                this.answerdQuestions[j].answer;
+              this.chosenAnswer[this.answerdQuestions[j].question] = this.answerdQuestions[j].answer;
+              break;
             } else {
               this.questionsArray[i].disableStatus = false;
             }
@@ -515,7 +498,6 @@ export default {
           count += 1;
         }
       }
-      console.log(this.currentQuizId);
       if (this.currentQuizId == 0) {
         if (this.answerdQuestions) {
           count = count + this.answerdQuestions.length;

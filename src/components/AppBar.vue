@@ -121,8 +121,6 @@ export default {
   }),
   created() {
     this.currentUserName = this.$cookies.get("currentUserName");
-    console.log(this.$cookies.get("currentUserName"));
-    // this.getData();
     this.setJalaliDate();
   },
   methods: {
