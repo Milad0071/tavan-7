@@ -85,7 +85,10 @@ export default {
           );
           this.$emit("reset-app");
           if (response.data[0].user_registered_exams[0] != undefined) {
-            this.checkAccess(response.data[0].user_registered_exams[0].exam, response.data[0].user_registered_exams[0].is_active);
+            this.checkAccess(
+              response.data[0].user_registered_exams[0].exam,
+              response.data[0].user_registered_exams[0].is_active
+            );
           }
         })
         .catch((err) => {
@@ -93,7 +96,7 @@ export default {
           if (err.status == 401) {
             this.$cookies.set("userEntered", false);
             this.$cookies.set("adminEntered", false);
-            this.$router.push({ name: "SignupLogin" });
+            this.$router.push({ name: "signupLogin" });
           }
         });
     },
@@ -116,14 +119,14 @@ export default {
           if (err.response.status == 401) {
             this.$cookies.set("userEntered", false);
             this.$cookies.set("adminEntered", false);
-            this.$router.push({ name: "SignupLogin" });
+            this.$router.push({ name: "signupLogin" });
           } else if (err.response.status == 403) {
             this.goToQuiz();
           }
         });
     },
     checkAccess(exam, is_active) {
-      if (exam == this.examId && (is_active == 'true' || is_active == false)) {
+      if (exam == this.examId && (is_active == "true" || is_active == false)) {
         this.notShow = true;
       }
     },

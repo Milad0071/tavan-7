@@ -477,17 +477,21 @@ export default {
               this.$swal("مشکلی پیش آمد، لطفا مجددا تلاش نمایید!", "error");
               if (response.status == 401) {
                 this.$cookies.set("userEntered", false);
-                this.$router.push({ name: "SignupLogin" });
+                this.$router.push({ name: "signupLogin" });
               }
             }
           })
           .catch((err) => {
             this.phoneBtnLoading = false;
             if (err.status == 400) {
-              this.$swal("مشکلی پیش آمد!", "کد ملی وارد شده قبلا ثبت شده است!", "error");
+              this.$swal(
+                "مشکلی پیش آمد!",
+                "کد ملی وارد شده قبلا ثبت شده است!",
+                "error"
+              );
             } else if (err.status == 401) {
               this.$cookies.set("userEntered", false);
-              this.$router.push({ name: "SignupLogin" });
+              this.$router.push({ name: "signupLogin" });
             } else {
               this.$swal("مشکلی پیش آمد!", err.message, "error");
             }

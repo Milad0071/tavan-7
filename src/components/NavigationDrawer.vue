@@ -170,7 +170,7 @@ export default {
         this.$cookies.remove("userRefreshToken");
         this.$cookies.remove("currentUserName");
         this.$cookies.remove("currentUserRole");
-        this.$router.push({ name: "SignupLogin" });
+        this.$router.push({ name: "signupLogin" });
       }
     },
   },

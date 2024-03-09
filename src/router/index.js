@@ -11,7 +11,7 @@ import { useCookies } from "vue3-cookies";
 const routes = [
   {
     path: "/",
-    name: "SignupLogin",
+    name: "signupLogin",
     component: () => import("@/views/SignupLogin.vue"),
     meta: {
       login: false,
@@ -79,24 +79,27 @@ router.beforeEach((to, from, next) => {
       return next({ path: "/" });
     }
   } else {
-    if (to.name == "SignupLogin") {
-      if ((cookies.get('userEntered') == 'false')) {
-        return next();
-      } else if (cookies.get('userEntered') == 'true') {
-        if (
-          cookies.get("userToken") == undefined ||
-          cookies.get("userToken") == null ||
-          cookies.get("userToken") == ""
-        ) {
-          cookies.set("userEntered", false);
-          return next();
-        } else {
-          cookies.set("userEntered", true);
-          return next({ name: "Home" });
-        }
-      }
-    }
+    console.log("fuck this shit");
+    return next();
+    // return next();
+    // if (to.name == "SignupLogin") {
+    //   if (cookies.get("userEntered") == "false") {
+    //     return next();
+    //   } else if (cookies.get("userEntered") == "true") {
+    //     if (
+    //       cookies.get("userToken") == undefined ||
+    //       cookies.get("userToken") == null ||
+    //       cookies.get("userToken") == ""
+    //     ) {
+    //       cookies.set("userEntered", false);
+    //       return next();
+    //     } else {
+    //       cookies.set("userEntered", true);
+    //       return next({ name: "Home" });
+    //     }
+    //   }
+    // }
   }
-})
+});
 
-export default router
+export default router;

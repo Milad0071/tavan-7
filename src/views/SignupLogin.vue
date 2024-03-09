@@ -16,9 +16,9 @@
             <div class="mainBox flex_class">
               <div class="flex_column_class">
                 <!-- sanjab logo -->
-                <tavanHaftLogo style="width: 50%; margin-bottom: 0%" />
+                <tavanHaftLogo style="width: 50%; margin-top: -10%" />
                 <!-- title part -->
-                <div class="flex_column_class">
+                <div class="text_part flex_column_class">
                   <h2 style="color: #a1834e">ورود/ ثبت‌ نام توان ۷</h2>
                   <h3 class="mt-2" style="color: #a1834e">
                     به توان ۷ خوش اومدی! جهت ورود یا ثبت‌ نام، شماره همراهتو
@@ -472,6 +472,9 @@ export default {
   padding: 0% 10%;
   margin-top: 5%;
 }
+.text_part {
+  margin-top: -10%;
+}
 .input_1 {
   margin-top: 1%;
   padding-top: 0 !important;
@@ -508,8 +511,6 @@ input::-moz-placeholder {
 }
 .btnContainer {
   width: 90%;
-  margin-top: 5%;
-  margin-bottom: 4%;
 }
 .childBtn {
   font-weight: bold;

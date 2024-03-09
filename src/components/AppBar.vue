@@ -121,7 +121,7 @@ export default {
   }),
   created() {
     this.currentUserName = this.$cookies.get("currentUserName");
-    console.log(this.$cookies.get("currentUserName"))
+    console.log(this.$cookies.get("currentUserName"));
     // this.getData();
     this.setJalaliDate();
   },
@@ -134,7 +134,7 @@ export default {
         this.$cookies.remove("userToken");
         this.$cookies.remove("userRefreshToken");
         this.$cookies.remove("currentUserName");
-        this.$router.push({ name: "SignupLogin" });
+        this.$router.push({ name: "signupLogin" });
       }
     },
     getData(perm) {
@@ -192,7 +192,7 @@ export default {
               if (response.status == 401) {
                 this.$cookies.set("userEntered", false);
                 this.$cookies.set("adminEntered", false);
-                this.$router.push({ name: "SignupLogin" });
+                this.$router.push({ name: "signupLogin" });
                 this.$swal(
                   "توکن شما منقضی شده است!",
                   response.message,
@@ -207,7 +207,7 @@ export default {
             if (err.response.status == 401) {
               this.$cookies.set("userEntered", false);
               this.$cookies.set("adminEntered", false);
-              this.$router.push({ name: "SignupLogin" });
+              this.$router.push({ name: "signupLogin" });
               this.$swal("توکن شما منقضی شده است!", err.message, "error");
             } else {
               this.$swal("مشکلی پیش آمد!", err.message, "error");
@@ -313,7 +313,7 @@ export default {
   opacity: 0.5;
   color: #a1834e;
 }
-@media screen and (max-width:1209px) {
+@media screen and (max-width: 1209px) {
   .mainBar {
     display: none;
   }

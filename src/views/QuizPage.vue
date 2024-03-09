@@ -152,7 +152,7 @@ export default {
           if (err.status == 401) {
             this.$cookies.set("userEntered", false);
             this.$cookies.set("adminEntered", false);
-            this.$router.push({ name: "SignupLogin" });
+            this.$router.push({ name: "signupLogin" });
           }
         });
     },
@@ -172,7 +172,6 @@ export default {
           this.examName = response.data.name;
           this.$cookies.set("examName", this.examName);
           this.quizArray.push(response.data);
-          console.log(this.quizArray.length);
           if (this.quizArray.length > 0) {
             this.notShowStart = false;
           }
@@ -185,17 +184,15 @@ export default {
           if (err.response.status == 401) {
             this.$cookies.set("userEntered", false);
             this.$cookies.set("adminEntered", false);
-            this.$router.push({ name: "SignupLogin" });
+            this.$router.push({ name: "signupLogin" });
           } else {
             this.$swal("مشکلی پیش آمد!", err.message, "error");
           }
         });
     },
     startNextQuiz(n) {
-      console.log(n, this.modules.length);
       if (n != this.modules.length) {
         this.nextQuizId = n;
-        console.log(this.modules[this.nextQuizId].id);
         this.startQuiz(this.modules[this.nextQuizId].id);
         this.compReset += 1;
       }
@@ -207,7 +204,7 @@ export default {
     closePage() {
       this.goToQuestions = false;
       this.$emit("reset-page");
-    }
+    },
   },
 };
 </script>
@@ -235,13 +232,13 @@ export default {
   padding: 1%;
 }
 .cardClass {
-  width: 70%;
+  min-width: 100% !important;
   background-color: rgb(255, 255, 255);
   align-self: flex-start;
   padding: 1% 1% 0 1%;
 }
 .questionsCardClass {
-  width: 50%;
+  width: 60%;
   background-color: rgb(255, 255, 255);
   align-self: flex-start;
   padding: 1% 1% 0 1%;

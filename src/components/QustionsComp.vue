@@ -20,13 +20,20 @@
               توجه: جهت پایان یافتن آزمون نیاز است به همه سوالات پاسخ داده
               باشید.
             </p>
-            <p>
-              توجه: در صورت بارگذاری مجدد صفحه، سوالات پاسخ داده شده حذف می‌شوند
-              و مجدد باید به سوالات پاسخ دهید.
-            </p>
           </div>
         </div>
-        <!-- <h2>{{ quizTitle }}:</h2> -->
+        <div v-if="answerdQuestions" class="flex_class ss03">
+          <h3>
+            سوالات پاسخ داده شده در رسته {{ examName }}:
+            {{ questionsArray.length }} / {{ answersCount }}
+          </h3>
+        </div>
+        <div v-else class="flex_class ss03">
+          <h3>
+            سوالات پاسخ داده شده در رسته {{ examName }}:
+            {{ questionsArray.length }} / {{ answersCount }}
+          </h3>
+        </div>
         <div class="flex_class paginateClass ss03">
           <v-pagination
             v-model="current"
@@ -34,7 +41,50 @@
             :total-visible="totalPages"
           ></v-pagination>
         </div>
-        <div class="endExamBtnContainer flex_class">
+        <div
+          v-if="showRedirect == true && answeredExist == false"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به صفحه اصلی
+          </v-btn>
+        </div>
+        <div
+          v-if="showNextModule == true && answeredExist == false"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به سوالات رسته بعدی
+          </v-btn>
+        </div>
+        <div
+          v-else-if="showEndExam == true && answeredExist == false"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            پایان آزمون
+          </v-btn>
+        </div>
+        <div
+          v-if="showRedirect == true && answeredExist == true"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به صفحه اصلی
+          </v-btn>
+        </div>
+        <div
+          v-if="showNextModule == true && answeredExist == true"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به سوالات رسته بعدی
+          </v-btn>
+        </div>
+        <div
+          v-else-if="showEndExam == true && answeredExist == true"
+          class="endExamBtnContainer flex_class"
+        >
           <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
             پایان آزمون
           </v-btn>
@@ -60,6 +110,7 @@
               >
                 <div class="toggleBtn">
                   <v-btn-toggle
+                    style="border-radius: 0 !important"
                     color="#00AAA3"
                     density="compact"
                     divided
@@ -103,12 +154,70 @@
             :total-visible="totalPages"
           ></v-pagination>
         </div>
-        <div class="endExamBtnContainer flex_class">
+        <div
+          v-if="showRedirect == true && answeredExist == false"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به صفحه اصلی
+          </v-btn>
+        </div>
+        <div
+          v-if="showNextModule == true && answeredExist == false"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به سوالات رسته بعدی
+          </v-btn>
+        </div>
+        <div
+          v-else-if="showEndExam == true && answeredExist == false"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            پایان آزمون
+          </v-btn>
+        </div>
+        <div
+          v-if="showRedirect == true && answeredExist == true"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به صفحه اصلی
+          </v-btn>
+        </div>
+        <div
+          v-if="showNextModule == true && answeredExist == true"
+          class="endExamBtnContainer flex_class"
+        >
+          <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
+            ذخیره پاسخ‌ها و هدایت به سوالات رسته بعدی
+          </v-btn>
+        </div>
+        <div
+          v-else-if="showEndExam == true && answeredExist == true"
+          class="endExamBtnContainer flex_class"
+        >
           <v-btn id="prevBtn" class="endExamBtn mr-2 mb-3" @click="endExam()">
             پایان آزمون
           </v-btn>
         </div>
       </div>
+      <!-- loading dialog -->
+      <v-dialog v-model="dialog" class="loadingDialog" persistent opacity="1">
+        <v-list class="py-2" color="primary" elevation="12" rounded="lg">
+          <v-list-item class="dialogList" title="در حال ثبت سوالات">
+            <template v-slot:append>
+              <v-progress-circular
+                color="primary"
+                indeterminate="disable-shrink"
+                size="26"
+                width="2"
+              ></v-progress-circular>
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-dialog>
     </v-locale-provider>
   </v-app>
 </template>
@@ -120,10 +229,17 @@ export default {
   props: { quizArray: Array, currentQuizId: Number },
   data: () => {
     return {
+      showRedirect: true,
+      showNextModule: false,
+      showEndExam: false,
+      answeredExist: false,
       scrollVal: true,
       examStatus: false,
+      dialog: false,
+      pageStart: false,
       answersCount: 0,
       answersLength: 0,
+      allAnswersCount: 0,
       current: 1,
       pageSize: 10,
       totalPages: null,
@@ -186,9 +302,84 @@ export default {
     },
     chosenAnswer: {
       handler(newVal) {
-        if (newVal.length != this.answersLength) {
-          this.answersLength = newVal.length;
-          this.answersCount += 1;
+        if (this.answerdQuestions) {
+          if (this.answerdQuestions.length == this.questionsArray.length) {
+            if (this.currentQuizId != 5) {
+              this.showNextModule = true;
+              this.showRedirect = false;
+              this.showEndExam = false;
+            } else if (this.currentQuizId == 5) {
+              this.showNextModule = false;
+              this.showRedirect = false;
+              this.showEndExam = true;
+            }
+          } else {
+            if (this.pageStart == true) {
+              (this.pageStart = false),
+                (this.answersCount =
+                  this.answersCount + this.answerdQuestions.length);
+            } else {
+              if (
+                newVal.length != this.answersLength ||
+                newVal.length - 1 == this.questionsArray.length
+              ) {
+                this.answersLength = newVal.length;
+                this.answersCount += 1;
+                console.log(this.answersCount, this.questionsArray.length);
+                if (
+                  this.questionsArray.length == this.answersCount &&
+                  this.currentQuizId != 5
+                ) {
+                  this.showNextModule = true;
+                  this.showRedirect = false;
+                  this.showEndExam = false;
+                } else if (
+                  this.currentQuizId == 5 &&
+                  this.questionsArray.length == this.answersCount
+                ) {
+                  this.showNextModule = false;
+                  this.showRedirect = false;
+                  this.showEndExam = true;
+                } else {
+                  this.showNextModule = false;
+                  this.showRedirect = true;
+                  this.showEndExam = false;
+                }
+              }
+            }
+          }
+        } else {
+          if (this.pageStart == true) {
+            this.pageStart = false;
+          } else {
+            if (
+              newVal.length != this.answersLength ||
+              newVal.length - 1 == this.questionsArray.length
+            ) {
+              this.answersLength = newVal.length;
+              this.answersCount += 1;
+              console.log(this.answersCount, this.questionsArray.length);
+              if (
+                this.questionsArray.length == this.answersCount &&
+                this.currentQuizId != 5
+              ) {
+                this.showNextModule = true;
+                this.showRedirect = false;
+                this.showEndExam = false;
+              } else if (
+                this.currentQuizId == 5 &&
+                this.questionsArray.length == this.answersCount
+              ) {
+                this.showNextModule = false;
+                this.showRedirect = false;
+                this.showEndExam = true;
+              } else {
+                this.showNextModule = false;
+                this.showRedirect = true;
+                this.showEndExam = false;
+              }
+            }
+          }
         }
       },
       deep: true,
@@ -206,7 +397,7 @@ export default {
     },
   },
   created() {
-    console.log(this.quizArray);
+    this.pageStart = true;
     this.answerdQuestions = this.makeRightPoints();
     this.examName = this.$cookies.get("examName");
   },
@@ -215,7 +406,6 @@ export default {
   },
   methods: {
     makeRightPoints() {
-      console.log(this.quizArray);
       if (
         this.quizArray[this.quizArray.length - 1].answered_questions != null ||
         this.quizArray[this.quizArray.length - 1].answered_questions !=
@@ -244,7 +434,23 @@ export default {
       this.quizDescription =
         this.quizArray[this.quizArray.length - 1].description;
       this.questionsArray = this.quizArray[this.quizArray.length - 1].questions;
+
       if (this.answerdQuestions) {
+        // this.answeredExist = true;
+        // if (this.answerdQuestions.length == this.questionsArray.length && this.currentQuizId != 5) {
+        //   this.showNextModule = true;
+        //   this.showRedirect = false;
+        //   this.showEndExam = false;
+        // } else if (this.answerdQuestions.length == this.questionsArray.length && this.currentQuizId == 5) {
+        //   this.showNextModule = false;
+        //   this.showRedirect = false;
+        //   this.showEndExam = true;
+        // } else {
+        //   this.showNextModule = false;
+        //   this.showRedirect = true;
+        //   this.showEndExam = false;
+        // }
+        // console.log(this.showRedirect, this.showNextModule, this.showEndExam, this.answeredExist)
         for (let i = 0; i < this.questionsArray.length; i++) {
           for (let j = 0; j < this.answerdQuestions.length; j++) {
             if (
@@ -260,6 +466,7 @@ export default {
           this.questionsArray[i].quizNum = i + 1;
         }
       } else {
+        this.answeredExist = false;
         for (let i = 0; i < this.questionsArray.length; i++) {
           this.questionsArray[i].quizNum = i + 1;
         }
@@ -274,6 +481,7 @@ export default {
       });
     },
     endExam() {
+      this.dialog = true;
       for (let i = 6; i < this.chosenAnswer.length; i++) {
         if (this.chosenAnswer[i] == 0) {
           this.chosenAnswer[i] = 2;
@@ -307,26 +515,24 @@ export default {
           count += 1;
         }
       }
+      console.log(this.currentQuizId);
       if (this.currentQuizId == 0) {
         if (this.answerdQuestions) {
-          count = count + this.answerdQuestions.length + 1;
-        } else {
-          count = count + 1;
+          count = count + this.answerdQuestions.length;
         }
       } else {
         if (this.answerdQuestions) {
           count = count + this.answerdQuestions.length;
         }
       }
-      console.log(this.currentQuizId);
-      if (this.currentQuizId == 5) {
+      if (this.currentQuizId == 5 && count == this.questionsArray.length) {
         this.examStatus = true;
       }
       var data = {
         answers: result,
         is_complete: this.examStatus,
       };
-      if (this.examStatus == true) {
+      if (this.examStatus == true && count == this.questionsArray.length) {
         axios({
           method: "POST",
           headers: {
@@ -339,13 +545,15 @@ export default {
           data: JSON.stringify(data),
         })
           .then(() => {
+            this.dialog = false;
             this.$router.push({ name: "Home" });
+            this.$swal("آزمون با موفقیت ثبت شد!", "", "success");
           })
           .catch((err) => {
             this.$swal("مشکلی پیش آمد!", err.message, "error");
             if (err.response.status == 401) {
               this.$cookies.set("userEntered", false);
-              this.$router.push({ name: "SignupLogin" });
+              this.$router.push({ name: "signupLogin" });
             }
           });
       } else {
@@ -361,14 +569,16 @@ export default {
           data: JSON.stringify(data),
         })
           .then(() => {
-            console.log(this.currentQuizId);
+            this.dialog = false;
             if (count == this.questionsArray.length) {
               this.$swal(`رسته ${this.quizTitle} تکمیل شد`, "", "success");
               this.nextId = this.currentQuizId + 1;
               this.$emit("next-module-id", this.nextId);
+              this.dialog = false;
             } else {
               this.$swal("ثبت موفق پاسخ‌ها", "", "success").then(() => {
                 this.$router.push({ name: "Home" });
+                this.dialog = false;
               });
             }
           })
@@ -377,7 +587,7 @@ export default {
             if (err.response.status == 401) {
               this.$cookies.set("userEntered", false);
               this.$cookies.set("adminEntered", false);
-              this.$router.push({ name: "SignupLogin" });
+              this.$router.push({ name: "signupLogin" });
             }
           });
       }
@@ -432,13 +642,16 @@ export default {
 }
 .questionMold {
   font-family: danaRegular;
-  width: 100٪;
+  width: 100%;
   border: 1px solid black;
   margin-top: 5%;
   padding: 0%;
 }
 .titlePart {
   align-self: flex-start;
+}
+.toggleBtn {
+  width: 100%;
 }
 .answersPart {
   border-top: 1px solid black;
@@ -454,19 +667,32 @@ export default {
   margin: 20px 0px;
 }
 .endExamBtnContainer {
-  width: 100%;
+  width: 55%;
 }
 .endExamBtn {
   font-weight: bold;
   color: #00aaa3 !important;
   border: 1px solid #00aaa3 !important;
-  width: 40%;
+  width: 100%;
 }
 .endExamBtn:hover {
   border: none;
   color: white !important;
   background-color: #00aaa3;
   font-weight: bold;
+}
+.loadingDialog {
+  font-family: danaRegular;
+  width: 20%;
+  height: 100%;
+}
+.dialogList {
+  font-family: danaRegular;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 .desktopInstagramContainer {
   display: none;
@@ -484,6 +710,9 @@ export default {
 }
 </style>
 <style>
+.loadingDialog > .v-overlay__scrim {
+  background-color: #00aaa3 !important;
+}
 @font-face {
   font-family: danaRegular;
   src: url("./../assets/fonts/Dana-Regular.ttf");
@@ -508,6 +737,10 @@ export default {
 }
 .toggleBtn > .v-btn-group--density-compact.v-btn-group {
   height: 40px !important;
+  width: 100%;
+}
+.v-btn-group--divided .v-btn:not(:last-child) {
+  width: 19.6% !important;
 }
 .v-selection-control .v-label {
   font-weight: bold !important;
