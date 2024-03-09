@@ -22,17 +22,22 @@
             </p>
           </div>
         </div>
-        <div v-if="answerdQuestions" class="flex_class ss03">
-          <h3>
-            سوالات پاسخ داده شده در رسته {{ examName }}:
-            {{ questionsArray.length }} / {{ answersCount }}
-          </h3>
-        </div>
-        <div v-else class="flex_class ss03">
-          <h3>
-            سوالات پاسخ داده شده در رسته {{ examName }}:
-            {{ questionsArray.length }} / {{ answersCount }}
-          </h3>
+        <div class="questions_count_Part">
+          <div v-if="answerdQuestions" class="flex_class ss03">
+            <h3>
+              سوالات پاسخ داده شده در رسته {{ examName }}:
+              {{ questionsArray.length }} / {{ answersCount }}
+            </h3>
+          </div>
+          <div v-else class="flex_class ss03">
+            <h3>
+              سوالات پاسخ داده شده در رسته {{ examName }}:
+              {{ questionsArray.length }} / {{ answersCount }}
+            </h3>
+          </div>
+          <div class="flex_class">
+            <h3>تعداد کل سوالات: ۲۹۰</h3>
+          </div>
         </div>
         <div class="flex_class paginateClass ss03">
           <v-pagination
@@ -621,6 +626,12 @@ export default {
   margin-top: 1%;
   border-radius: 7px;
   padding: 10px;
+}
+.questions_count_Part {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
 }
 .questionMold {
   font-family: danaRegular;
